@@ -72,4 +72,6 @@ function parseInputPoints(input, startGradient, endGradient) {
             )
         );
     }
+    
+    return pointArray;
 }
