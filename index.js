@@ -93,7 +93,7 @@ function solveSegment(point1, point2) {
     d -> -((-3 A[1] A[2] B[1]^2 + A[1]^2 A[3] B[1]^2 + A[2] B[1]^3 - A[1] A[3] B[1]^3 - A[1]^3 B[2] + 3 A[1]^2 B[1] B[2] + A[1]^3 B[1] B[3] - A[1]^2 B[1]^2 B[3])/(A[1] - B[1])^3)
     */
     cubic.push(
-        -((-3* point1.x * point1.y * Math.pow(point1.x,2)+   Math.pow(point1.x,2)* point1.m * \  Math.pow(point1.x,2) +  point1.y *  Math.pow(point1.x,3) -  point1.x * point1.m * \  Math.pow(point1.x,3) -   Math.pow(point1.x,3)* point1.y  + 3*  Math.pow(point1.x,2)* point1.x * \ point1.y  +   Math.pow(point1.x,3)* point1.x * point1.m  -   Math.pow(point1.x,2)* \  Math.pow(point1.x,2)* point1.m )/ Math.pow(( point1.x  -  point1.x ),3) )
+        -((-3 * point1.x * point1.y * Math.pow(point1.x, 2) +  Math.pow(point1.x, 2) * point1.m * Math.pow(point1.x, 2) + point1.y * Math.pow(point1.x, 3) - point1.x * point1.m * Math.pow(point1.x, 3) -  Math.pow(point1.x, 3) * point1.y + 3 * Math.pow(point1.x, 2) * point1.x * point1.y + Math.pow(point1.x, 3) * point1.x * point1.m - Math.pow(point1.x, 2) * Math.pow(point1.x, 2) * point1.m) / Math.pow((point1.x - point1.x), 3))
     );
     /*
     Solves for c
