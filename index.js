@@ -27,7 +27,7 @@ function gradient(point1, point2) {
  * "y" may be used in the place of "x,y", in which case the x value is set to the previous value +1 (or 1 if it is the first point).
  * @param {String} input The text input of the sequence of points
  * @param {float} startGradient The gradient at the first point
- * @param {float} startGradient The gradient at the last point
+ * @param {float} endGradient The gradient at the last point
  * @return {Point[]} An array of all Points in the order input
  */
 function parseInputPoints(input, startGradient, endGradient) {
@@ -118,3 +118,43 @@ function solveSegment(point1, point2) {
     );
     return cubic;
 }
+
+/**
+ * Plots a list of points and their interpolation on a canvas
+ * @param {String} canvasID The id of the canvas to use
+ * @param {Point[]} points An array of points
+ */
+function plotPath(canvasID, points) {
+    'use strict';
+    var i,
+        interpolation,
+        canvas,
+        canvas_2d;
+    
+    canvas =  document.getElementById(canvasID);
+    canvas_2d = canvas.getContext("2d");
+    
+    
+    //Solves the interpolation.
+    for (i = 0; i < points.length  - 1; i += 1) {
+        interpolation.push(solveSegment(points[i], points[i + 1]));
+    }
+    
+    //Draws straight line
+    canvas_2d.beginPath();
+    canvas_2d.setLineDash([5]);
+    canvas_2d.lineWidth = 1;
+    for (i = 0; i < points.length  - 1; i += 1) {
+        //TODO, map. Lineto() then stroke.
+    }
+}
+
+/**
+ * TODO
+ * Maps a coordinate pair {x,y} to the relevant position on a canvas using a canvasMap
+ */
+
+/**
+ * TODO
+ * Constructor for the canvasMap object, containing information neccesary to scale coordinates to a canvas, increasing upwards and rightwards from minX and minY respecitively to the maximum value of the coordinate.
+ */
