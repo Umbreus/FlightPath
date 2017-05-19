@@ -93,27 +93,28 @@ function solveSegment(point1, point2) {
     d -> -((-3 A[1] A[2] B[1]^2 + A[1]^2 A[3] B[1]^2 + A[2] B[1]^3 - A[1] A[3] B[1]^3 - A[1]^3 B[2] + 3 A[1]^2 B[1] B[2] + A[1]^3 B[1] B[3] - A[1]^2 B[1]^2 B[3])/(A[1] - B[1])^3)
     */
     cubic.push(
-
+        -((-3 * point1.x * point1.y * Math.pow(point2.x, 2) + Math.pow(point1.x, 2) * point1.m * Math.pow(point2.x, 2) + point1.y * Math.pow(point2.x, 3) - point1.x * point1.m * Math.pow(point2.x, 3) - Math.pow(point1.x, 3) * point2.y + 3 * Math.pow(point1.x, 2) * point2.x * point2.y + Math.pow(point1.x, 3) * point2.x * point2.m - Math.pow(point1.x, 2) * Math.pow(point2.x, 2) * point2.m) / Math.pow((point1.x - point2.x), 3))
     );
     /*
     Solves for c
     c -> -((6 A[1] A[2] B[1] - 2 A[1]^2 A[3] B[1] + A[1] A[3] B[1]^2 + A[3] B[1]^3 - 6 A[1] B[1] B[2] - A[1]^3 B[3] - A[1]^2 B[1] B[3] + 2 A[1] B[1]^2 B[3])/(A[1] - B[1])^3)
     */
     cubic.push(
-
+        -((6 * point1.x * point1.y * point2.x - 2 * Math.pow(point1.x, 2) * point1.m * point2.x + point1.x * point1.m * Math.pow(point2.x, 2) + point1.m * Math.pow(point2.x, 3) - 6 * point1.x * point2.x * point2.y - Math.pow(point1.x, 3) * point2.m - Math.pow(point1.x, 2) * point2.x * point2.m + 2 * point1.x * Math.pow(point2.x, 2) * point2.m) / Math.pow((point1.x - point2.x), 3))
     );
     /*
     Solves for b
     b -> -((-3 A[1] A[2] + A[1]^2 A[3] - 3 A[2] B[1] + A[1] A[3] B[1] - 2 A[3] B[1]^2 + 3 A[1] B[2] + 3 B[1] B[2] + 2 A[1]^2 B[3] - A[1] B[1] B[3] - B[1]^2 B[3])/(A[1] - B[1])^3)
     */
     cubic.push(
-        
+        -((-3 * point1.x * point1.y + Math.pow(point1.x, 2) * point1.m - 3 * point1.y * point2.x + point1.x * point1.m * point2.x - 2 * point1.m * Math.pow(point2.x, 2) + 3 * point1.x * point2.y + 3 * point2.x * point2.y + 2 * Math.pow(point1.x, 2) * point2.m - point1.x * point2.x * point2.m - Math.pow(point2.x, 2) * point2.m) / Math.pow((point1.x - point2.x), 3))
     );
     /*
     Solves for a
     a -> -((2 A[2] - A[1] A[3] + A[3] B[1] - 2 B[2] - A[1] B[3] + B[1] B[3])/(A[1] - B[1])^3)
     */
     cubic.push(
-
+        -((2 * point1.y - point1.x * point1.m + point1.m * point2.x - 2 * point2.y - point1.x * point2.m + point2.x * point2.m) / Math.pow((point1.x - point2.x), 3))
     );
+    return cubic;
 }
