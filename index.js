@@ -336,16 +336,22 @@ function plotPath(canvasID, points) {
 function drawHud(canvasID, x){
     var canvas,
         canvas_2d,
-        radius;
+        radius,
+        numlines,
+        lookahead;
 
     canvas =  document.getElementById(canvasID);
     canvas_2d = canvas.getContext("2d");
     
+    //Clears the canvas
+    canvas_2d.clearRect(0,0,canvas_2d.canvas.width,canvas_2d.canvas.height);
+    
     //Draws Statics
     radius = Math.min(canvas.width/2,canvas.height/2);
-    canvas_2d.beginPath;
-    canvas_2d.lineWidth = 5;
+    
     // O
+    canvas_2d.beginPath();
+    canvas_2d.lineWidth = 5;
     canvas_2d.arc(
         canvas.width/2,
         canvas.height/2,
@@ -356,8 +362,9 @@ function drawHud(canvasID, x){
     );
     canvas_2d.closePath();
     canvas_2d.stroke();
+    
     // |
-    canvas_2d.beginPath;
+    canvas_2d.beginPath();
     canvas_2d.lineWidth = 1;
     canvas_2d.moveTo(canvas.width/2,canvas.height/2+radius);
     canvas_2d.lineTo(canvas.width/2,canvas.height/2-radius);
@@ -365,6 +372,24 @@ function drawHud(canvasID, x){
     canvas_2d.moveTo(canvas.width/2+radius,canvas.height/2);
     canvas_2d.lineTo(canvas.width/2-radius,canvas.height/2);
     canvas_2d.stroke();
+    
+    //Draws Dynamics
+    numlines = document.getElementById("numlines").value;
+    lookahead = document.getElementById("lookahead").value;
+    if (g_points !== undefined){
+        for(var n = 1; n <= numlines; n += 1){
+            var dx = lookahead*n;
+            var dy = evalSpline(g_points, x+dx)-evalSpline(g_points, x);
+            var lineY = Math.atan((dy)/(dx))/(Math.PI/2)*radius;
+            var lineR = radius/2/n;
+            
+            canvas_2d.beginPath();
+            canvas_2d.lineWidth = 1;
+            canvas_2d.moveTo(canvas.width/2-lineR,canvas.height/2+lineY);
+            canvas_2d.lineTo(canvas.width/2+lineR,canvas.height/2+lineY);
+            canvas_2d.stroke();
+        }
+    }
 }
 
 function test(){
@@ -376,11 +401,13 @@ function test(){
     points = parseInputPoints(document.getElementById("Input-Sequence").value,0,0);
     plotPath("Canvas-Path", points);
     
+    /* Draws a rectangle for testing
     testcanvas = document.getElementById("Canvas-Path").getContext("2d");
     testcanvas.beginPath();
     testcanvas.rect(10,10,20,20);
     testcanvas.fillStyle = "red";
     testcanvas.fill();
+    */
     
     // Gui
     drawHud("Canvas-Hud",0);
