@@ -1,3 +1,8 @@
+/*jslint white: true */
+/*global
+alert, confirm, console, Debug, opera, prompt, WSH
+*/
+
 /**
  * Constructor for the point object, containing information about a specific point
  * @param {float} xVal The x value of the point (this.x)
@@ -37,6 +42,9 @@ function parseInputPoints(input, startGradient, endGradient) {
         thisGradient,
         pointFloatArray,
         pointArray;
+   
+    pointArray = new Array;
+    pointFloatArray = new Array;
     
     //Converts the input to an array of float[] values each representing a point.
     pointFloatArray = input.split(" ");
@@ -120,6 +128,31 @@ function solveSegment(point1, point2) {
 }
 
 /**
+ * Maps a coordinate pair {x,y} to the relevant position on a canvas using a canvasMap object
+ * @param {Point} point The point to transform
+ * @param {canvasMap} canvasMap The object containing data about the transformation
+ *        :{canvas} .canvas The canvas to map to
+ *        :{int} .maxX The maximum x value
+ *        :{int} .maxY The maximum y value
+ *        :{int} .minX The minimum x value
+ *        :{int} .minY The minimum y value
+ */
+function map(point, canvasMap) {
+    'use strict';
+    var xPercent,
+        yPercent;
+    
+    xPercent = (point.x - canvasMap.minX) / (canvasMap.maxX - canvasMap.minX);
+    yPercent = (point.y - canvasMap.minY) / (canvasMap.maxY - canvasMap.minY);
+    
+    return new Point(
+        xPercent * canvasMap.canvas.width,
+        yPercent * canvasMap.canvas.height,
+        null
+    );
+}
+
+/**
  * Plots a list of points and their interpolation on a canvas
  * @param {String} canvasID The id of the canvas to use
  * @param {Point[]} points An array of points
@@ -129,32 +162,58 @@ function plotPath(canvasID, points) {
     var i,
         interpolation,
         canvas,
-        canvas_2d;
+        canvas_2d,
+        canvasMap,
+        nextPoint;
     
     canvas =  document.getElementById(canvasID);
     canvas_2d = canvas.getContext("2d");
     
+    canvasMap.canvas = canvas;
+    canvasMap.maxX = canvasMap.minX = points[0].x;
+    canvasMap.maxY = canvasMap.minY = points[0].y;
     
-    //Solves the interpolation.
+    //Solves the interpolation and collects mapping data.
     for (i = 0; i < points.length  - 1; i += 1) {
         interpolation.push(solveSegment(points[i], points[i + 1]));
+        
+        if (points[i+1].x > canvasMap) {
+            canvasMap.maxX = points[i + 1].x;
+        } else {
+            canvasMap.minX = points[i + 1].x;
+        }
+        if (points[i+1].y > canvasMap) {
+            canvasMap.maxY = points[i+1].y;
+        } else {
+            canvasMap.minY = points[i+1].y;
+        }
     }
     
     //Draws straight line
     canvas_2d.beginPath();
+    canvas_2d.moveTo( map(points[0],canvasMap) );
     canvas_2d.setLineDash([5]);
     canvas_2d.lineWidth = 1;
-    for (i = 0; i < points.length  - 1; i += 1) {
-        //TODO, map. Lineto() then stroke.
+    for (i = 1; i < points.length; i += 1) {
+        nextPoint = map(points[i],canvasMap);
+        canvas_2d.lineTo(nextPoint.x,nextPoint.y);
     }
+    canvas_2d.stroke();
 }
 
-/**
- * TODO
- * Maps a coordinate pair {x,y} to the relevant position on a canvas using a canvasMap
- */
-
-/**
- * TODO
- * Constructor for the canvasMap object, containing information neccesary to scale coordinates to a canvas, increasing upwards and rightwards from minX and minY respecitively to the maximum value of the coordinate.
- */
+function test(){
+    'use strict';
+    var points,
+        testcanvas;
+    
+    alert("hi");
+    
+    points = parseInputPoints(document.getElementById("Input-Sequence").value,0,0);
+    plotPath("Canvas-Path", points);
+    
+    testcanvas = document.getElementById("Canvas-Path").getContext("2d");
+    testcanvas.beginPath();
+    testcanvas.rect(10,10,20,20);
+    testcanvas.fillStyle = "red";
+    testcanvas.fill();
+}

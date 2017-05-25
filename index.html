@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>FlightPath</title>
     <link href="index.css" rel="stylesheet" type="text/css" />
-    <script src="index.js"></script>
+    <script type="text/javascript" src="index.js"></script>
 </head>
 <body class = "flex-row-layout" >
     <div>
@@ -12,7 +12,7 @@
     </div>
     
     <div class="flex-expand flex-column-layout">
-        <canvas id="Canvas-Gui" class="flex-expand thinborder">
+        <canvas id="Canvas-Hud" class="flex-expand thinborder">
             Your browser does not support the HTML5 canvas tag.
         </canvas>
         <div class="thinborder">
@@ -34,8 +34,8 @@
         </canvas>
         <div class="thinborder">
             <div>Input Sequence</div>
-            <input type="text">
-            <input type="button" value="Calculate">
+            <input type="text" id="Input-Sequence">
+            <input type="button" value="Calculate" onclick="test();">
         </div>
     </div>
     
