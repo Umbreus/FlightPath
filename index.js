@@ -7,12 +7,11 @@ alert, confirm, console, Debug, opera, prompt, WSH
  * Initialisation of global variables
  */
 var g_points, //Contains parsed points and calculated gradients
-    g_startGradient,
-    g_endGradient,
+    g_startGradient = 0,
+    g_endGradient = 0,
     g_step;
 /**
  * Resizes both canvasses
- * Todo: Redraw content
  */
 function resizeCanvas(){
     var c2,
@@ -39,6 +38,7 @@ function resizeCanvas(){
     if (g_points !== undefined){
         plotPath("Canvas-Path",g_points);
     }
+    drawHud("Canvas-Hud",0);
 }
 /**
  * To be called on load to initialise various things
@@ -326,8 +326,50 @@ function plotPath(canvasID, points) {
     
 }
 
+/**
+ * INCOMPLETE
+ * Draws a heads-up flight display for a specified location and interpolation
+ * uses the global variables: g_points
+ * @param {String} canvasID The id of the canvas to use
+ * @param {float} x The value of x the plane is at
+ */
+function drawHud(canvasID, x){
+    var canvas,
+        canvas_2d,
+        radius;
+
+    canvas =  document.getElementById(canvasID);
+    canvas_2d = canvas.getContext("2d");
+    
+    //Draws Statics
+    radius = Math.min(canvas.width/2,canvas.height/2);
+    canvas_2d.beginPath;
+    canvas_2d.lineWidth = 5;
+    // O
+    canvas_2d.arc(
+        canvas.width/2,
+        canvas.height/2,
+        radius,
+        0,
+        2*Math.PI,
+        false
+    );
+    canvas_2d.closePath();
+    canvas_2d.stroke();
+    // |
+    canvas_2d.beginPath;
+    canvas_2d.lineWidth = 1;
+    canvas_2d.moveTo(canvas.width/2,canvas.height/2+radius);
+    canvas_2d.lineTo(canvas.width/2,canvas.height/2-radius);
+    // —
+    canvas_2d.moveTo(canvas.width/2+radius,canvas.height/2);
+    canvas_2d.lineTo(canvas.width/2-radius,canvas.height/2);
+    canvas_2d.stroke();
+}
+
 function test(){
     'use strict';
+    //Path
     var points,
         testcanvas;
     
@@ -339,4 +381,7 @@ function test(){
     testcanvas.rect(10,10,20,20);
     testcanvas.fillStyle = "red";
     testcanvas.fill();
+    
+    // Gui
+    drawHud("Canvas-Hud",0);
 }
