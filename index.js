@@ -3,8 +3,10 @@
 alert, confirm, console, Debug, opera, prompt, WSH
 */
 
+
 /**
- * Resizes both canvasses NOT WORKING
+ * Resizes both canvasses
+ * Todo: Redraw content
  */
 function resizeCanvas(){
     var c2,
@@ -13,8 +15,8 @@ function resizeCanvas(){
         s2;
     c1 = document.getElementById("Canvas-Path");
     c2 = document.getElementById("Canvas-Hud");
-    s1 = window.getComputedStyle(c1,null);
-    s2 = window.getComputedStyle(c2,null);
+    s1 = c1.getBoundingClientRect();
+    s2 = c2.getBoundingClientRect();
     
     c1.width = s1.width;
     c1.height = s1.height;
@@ -22,7 +24,7 @@ function resizeCanvas(){
     c2.height = s2.width;
 }
 /**
- * To be called on load to initialise various things NOT WORKING
+ * To be called on load to initialise various things
  */
 function initialise(){
     window.addEventListener('resize', resizeCanvas, false);
@@ -157,6 +159,26 @@ function solveSegment(point1, point2) {
 }
 
 /**
+ * Solves the interpolating spline for a data set at a particular point
+ * Uses code adapted from CSPL.js.
+ * @param {Point[]} point The Points to use 
+ * @param {float} x The value of x to calculate at
+ * @return {float} The value of the interpolating function at that point
+ */
+function evalSpline(points, x){
+    var i = 1;
+    while(points[i].x<x) i++;
+    
+    var t = (x - points[i-1].x) / (points[i].x - points[i-1].x);
+		
+    var a =  points[i-1].m*(points[i].x-points[i-1].x) - (points[i].y-points[i-1].y);
+    var b = -points[i].m*(points[i].x-points[i-1].x) + (points[i].y-points[i-1].y);
+		
+    var q = (1-t)*points[i-1].y + t*points[i].y + t*(1-t)*(a*(1-t)+b*t);
+    return q;
+}
+
+/**
  * Maps a coordinate pair {x,y} to the relevant position on a canvas using a canvasMap object
  * @param {Point} point The point to transform
  * @param {canvasMap} canvasMap The object containing data about the transformation
@@ -256,7 +278,7 @@ function plotPath(canvasID, points) {
     canvas_2d.stroke();
     
     //Draws interpolation
-    var step = 0.5;
+    var step = 0.1;
     
     nextPoint = map(points[0],canvasMap);
     canvas_2d.beginPath();
@@ -268,9 +290,15 @@ function plotPath(canvasID, points) {
     for (i = 0; i < points.length - 1; i += 1) {
         for (x = points[i].x; x <= points[i+1].x; x += step) {
             nextPoint = map(
+                new Point(x,evalSpline(points, x),null),
+                canvasMap
+                );
+            /* Native interpolation NOT WORKING
+            nextPoint = map(
                 new Point(x,evalPolyn(interpolation[i],x),null),
                 canvasMap
             );
+            */
             canvas_2d.lineTo(nextPoint.x,nextPoint.y);
         }
     }
