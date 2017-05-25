@@ -4,6 +4,32 @@ alert, confirm, console, Debug, opera, prompt, WSH
 */
 
 /**
+ * Resizes both canvasses NOT WORKING
+ */
+function resizeCanvas(){
+    var c2,
+        c1,
+        s1,
+        s2;
+    c1 = document.getElementById("Canvas-Path");
+    c2 = document.getElementById("Canvas-Hud");
+    s1 = window.getComputedStyle(c1,null);
+    s2 = window.getComputedStyle(c2,null);
+    
+    c1.width = s1.width;
+    c1.height = s1.height;
+    c2.width = s2.width;
+    c2.height = s2.width;
+}
+/**
+ * To be called on load to initialise various things NOT WORKING
+ */
+function initialise(){
+    window.addEventListener('resize', resizeCanvas, false);
+    resizeCanvas();
+}
+
+/**
  * Constructor for the point object, containing information about a specific point
  * @param {float} xVal The x value of the point (this.x)
  * @param {float} yVal The y value of the point (this.y)
@@ -39,12 +65,11 @@ function parseInputPoints(input, startGradient, endGradient) {
     'use strict';
     var i,
         j,
-        thisGradient,
         pointFloatArray,
         pointArray;
    
-    pointArray = new Array;
-    pointFloatArray = new Array;
+    pointArray = [];
+    pointFloatArray = [];
     
     //Converts the input to an array of float[] values each representing a point.
     pointFloatArray = input.split(" ");
@@ -62,23 +87,27 @@ function parseInputPoints(input, startGradient, endGradient) {
     
     //Converts float array elements to Points and adds to new array
     for (i = 0; i < pointFloatArray.length; i += 1) {
-        switch (i) {
-        case 0:
-            thisGradient = startGradient;
-            break;
-        case pointFloatArray.length:
-            thisGradient = endGradient;
-            break;
-        default:
-            thisGradient = gradient(pointArray[i - 1], pointArray[i + 1]);
-        }
+        //Adds new points
         pointArray.push(
             new Point(
                 pointFloatArray[i][0],
                 pointFloatArray[i][1],
-                thisGradient
+                0
             )
         );
+    }
+    for (i = 0; i < pointFloatArray.length; i += 1) {
+        //Sets Gradients
+        switch (i) {
+        case 0:
+            pointArray[i].m = startGradient;
+            break;
+        case pointFloatArray.length-1:
+            pointArray[i].m = endGradient;
+            break;
+        default:
+            pointArray[i].m = gradient(pointArray[i - 1], pointArray[i + 1]);
+        }
     }
     
     return pointArray;
@@ -95,7 +124,7 @@ function parseInputPoints(input, startGradient, endGradient) {
 function solveSegment(point1, point2) {
     'use strict';
     //An array holding coefficients for the equation ax^3 + bx^2 + cx + d
-    var cubic;
+    var cubic = [];
     /*
     Solves for d
     d -> -((-3 A[1] A[2] B[1]^2 + A[1]^2 A[3] B[1]^2 + A[2] B[1]^3 - A[1] A[3] B[1]^3 - A[1]^3 B[2] + 3 A[1]^2 B[1] B[2] + A[1]^3 B[1] B[3] - A[1]^2 B[1]^2 B[3])/(A[1] - B[1])^3)
@@ -147,7 +176,7 @@ function map(point, canvasMap) {
     
     return new Point(
         xPercent * canvasMap.canvas.width,
-        yPercent * canvasMap.canvas.height,
+        (1-yPercent) * canvasMap.canvas.height,
         null
     );
 }
@@ -166,32 +195,40 @@ function plotPath(canvasID, points) {
         canvasMap,
         nextPoint;
     
+    interpolation = [];
     canvas =  document.getElementById(canvasID);
     canvas_2d = canvas.getContext("2d");
     
-    canvasMap.canvas = canvas;
-    canvasMap.maxX = canvasMap.minX = points[0].x;
-    canvasMap.maxY = canvasMap.minY = points[0].y;
+    canvasMap = {
+        canvas:canvas,
+        maxX:points[0].x,
+        minX:points[0].x,
+        maxY:points[0].y,
+        minY:points[0].y
+    };
     
     //Solves the interpolation and collects mapping data.
     for (i = 0; i < points.length  - 1; i += 1) {
         interpolation.push(solveSegment(points[i], points[i + 1]));
         
-        if (points[i+1].x > canvasMap) {
+        if (points[i+1].x > canvasMap.maxX) {
             canvasMap.maxX = points[i + 1].x;
-        } else {
+        } else if(points[i+1].x < canvasMap.minX) {
             canvasMap.minX = points[i + 1].x;
         }
-        if (points[i+1].y > canvasMap) {
+        if (points[i+1].y > canvasMap.maxY) {
             canvasMap.maxY = points[i+1].y;
-        } else {
+        } else if(points[i+1].y < canvasMap.minY) {
             canvasMap.minY = points[i+1].y;
         }
     }
+    //Clears the canvas
+    canvas_2d.clearRect(0,0,canvas_2d.canvas.width,canvas_2d.canvas.height);
     
     //Draws straight line
+    nextPoint = map(points[0],canvasMap);
     canvas_2d.beginPath();
-    canvas_2d.moveTo( map(points[0],canvasMap) );
+    canvas_2d.moveTo(nextPoint.x,nextPoint.y);
     canvas_2d.setLineDash([5]);
     canvas_2d.lineWidth = 1;
     for (i = 1; i < points.length; i += 1) {
