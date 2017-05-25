@@ -9,7 +9,8 @@ alert, confirm, console, Debug, opera, prompt, WSH
 var g_points, //Contains parsed points and calculated gradients
     g_startGradient = 0,
     g_endGradient = 0,
-    g_step;
+    g_step,
+    g_canvasMap;
 /**
  * Resizes both canvasses
  */
@@ -324,10 +325,10 @@ function plotPath(canvasID, points) {
     }
     canvas_2d.stroke();
     
+    g_canvasMap = canvasMap;
 }
 
 /**
- * INCOMPLETE
  * Draws a heads-up flight display for a specified location and interpolation
  * uses the global variables: g_points
  * @param {String} canvasID The id of the canvas to use
@@ -349,6 +350,18 @@ function drawHud(canvasID, x){
     //Draws Statics
     radius = Math.min(canvas.width/2,canvas.height/2);
     
+    // |
+    canvas_2d.beginPath();
+    canvas_2d.lineWidth = 1;
+    canvas_2d.moveTo(canvas.width/2,canvas.height/2+radius);
+    canvas_2d.lineTo(canvas.width/2,canvas.height/2-radius);
+    // —
+    canvas_2d.moveTo(canvas.width/2+radius,canvas.height/2);
+    canvas_2d.lineTo(canvas.width/2-radius,canvas.height/2);
+    canvas_2d.strokeStyle = "gray";
+    canvas_2d.stroke();
+    canvas_2d.strokeStyle = "black";
+    
     // O
     canvas_2d.beginPath();
     canvas_2d.lineWidth = 5;
@@ -363,20 +376,11 @@ function drawHud(canvasID, x){
     canvas_2d.closePath();
     canvas_2d.stroke();
     
-    // |
-    canvas_2d.beginPath();
-    canvas_2d.lineWidth = 1;
-    canvas_2d.moveTo(canvas.width/2,canvas.height/2+radius);
-    canvas_2d.lineTo(canvas.width/2,canvas.height/2-radius);
-    // —
-    canvas_2d.moveTo(canvas.width/2+radius,canvas.height/2);
-    canvas_2d.lineTo(canvas.width/2-radius,canvas.height/2);
-    canvas_2d.stroke();
-    
     //Draws Dynamics
     numlines = document.getElementById("numlines").value;
     lookahead = document.getElementById("lookahead").value;
     if (g_points !== undefined){
+        //Draws Lines
         for(var n = 1; n <= numlines; n += 1){
             var dx = lookahead*n;
             var dy = evalSpline(g_points, x+dx)-evalSpline(g_points, x);
@@ -384,7 +388,7 @@ function drawHud(canvasID, x){
             var lineR = radius/2/n;
             
             canvas_2d.beginPath();
-            canvas_2d.lineWidth = 1;
+            canvas_2d.lineWidth = 2;
             canvas_2d.moveTo(canvas.width/2-lineR,canvas.height/2+lineY);
             canvas_2d.lineTo(canvas.width/2+lineR,canvas.height/2+lineY);
             canvas_2d.stroke();
