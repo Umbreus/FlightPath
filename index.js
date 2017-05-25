@@ -3,7 +3,13 @@
 alert, confirm, console, Debug, opera, prompt, WSH
 */
 
-
+/**
+ * Initialisation of global variables
+ */
+var g_points, //Contains parsed points and calculated gradients
+    g_startGradient,
+    g_endGradient,
+    g_step;
 /**
  * Resizes both canvasses
  * Todo: Redraw content
@@ -15,13 +21,24 @@ function resizeCanvas(){
         s2;
     c1 = document.getElementById("Canvas-Path");
     c2 = document.getElementById("Canvas-Hud");
+    
+    //Added to stop canvas growing to max flexbox|predefined size
+    c1.width = undefined;
+    c1.height = undefined;
+    c2.width = undefined;
+    c2.height = undefined;
+    
     s1 = c1.getBoundingClientRect();
     s2 = c2.getBoundingClientRect();
     
     c1.width = s1.width;
     c1.height = s1.height;
     c2.width = s2.width;
-    c2.height = s2.width;
+    c2.height = s2.height;
+    
+    if (g_points !== undefined){
+        plotPath("Canvas-Path",g_points);
+    }
 }
 /**
  * To be called on load to initialise various things
@@ -111,6 +128,9 @@ function parseInputPoints(input, startGradient, endGradient) {
             pointArray[i].m = gradient(pointArray[i - 1], pointArray[i + 1]);
         }
     }
+    
+    //TODO - remove this and put in main methods - added to test redraw
+    g_points = pointArray;
     
     return pointArray;
 }
