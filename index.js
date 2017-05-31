@@ -438,7 +438,8 @@ function drawHud(canvasID, x){
             canvas_2d.stroke();
             
             if(g_canvasMap !== undefined){
-               pathcanvas.beginPath();
+                // Draws scan lines
+                pathcanvas.beginPath();
                 nextPoint = map(
                 new Point(x+dx,g_canvasMap.minY,null),
                 g_canvasMap
@@ -454,11 +455,27 @@ function drawHud(canvasID, x){
                 pathcanvas.setLineDash([5]);
                 pathcanvas.strokeStyle = '#003300';
                 pathcanvas.stroke();
+                
+                // Draws bearing lines
+                pathcanvas.beginPath();
+                nextPoint = map(
+                    new Point(x,evalSpline(g_points, x),null), g_canvasMap
+                );
+                pathcanvas.moveTo(nextPoint.x,nextPoint.y);
+                nextPoint = map(
+                    new Point(x+dx,evalSpline(g_points, x+dx),null), g_canvasMap
+                );
+                pathcanvas.lineTo(nextPoint.x,nextPoint.y);
+                
+                pathcanvas.lineWidth = 1;
+                pathcanvas.setLineDash([0]);
+                pathcanvas.strokeStyle = '#003300';
+                pathcanvas.stroke();
             }
             }
         }
         
-        //Draws Plane --> if path
+        //Draws Plane
         
         if(g_canvasMap !== undefined){
             nextPoint = map(
