@@ -378,6 +378,7 @@ function drawHud(canvasID, x){
 
     canvas =  document.getElementById(canvasID);
     canvas_2d = canvas.getContext("2d");
+    pathcanvas =  document.getElementById("Canvas-Path").getContext("2d");
     
     //Clears the canvas
     canvas_2d.clearRect(0,0,canvas_2d.canvas.width,canvas_2d.canvas.height);
@@ -432,14 +433,31 @@ function drawHud(canvasID, x){
             canvas_2d.moveTo(canvas.width/2-lineR,canvas.height/2+lineY);
             canvas_2d.lineTo(canvas.width/2+lineR,canvas.height/2+lineY);
             canvas_2d.stroke();
+            
+            if(g_canvasMap !== undefined){
+               pathcanvas.beginPath();
+                nextPoint = map(
+                new Point(x+dx,g_canvasMap.minY,null),
+                g_canvasMap
+                );
+                pathcanvas.moveTo(nextPoint.x,nextPoint.y);
+                nextPoint = map(
+                new Point(x+dx,g_canvasMap.maxY,null),
+                g_canvasMap
+                );
+                pathcanvas.lineTo(nextPoint.x,nextPoint.y);
+                
+                pathcanvas.lineWidth = 1;
+                pathcanvas.setLineDash([5]);
+                pathcanvas.strokeStyle = '#003300';
+                pathcanvas.stroke();
+            }
             }
         }
         
         //Draws Plane --> if path
         
         if(g_canvasMap !== undefined){
-            pathcanvas =  document.getElementById("Canvas-Path").getContext("2d");
-        
             nextPoint = map(
                 new Point(x,evalSpline(g_points, x),null),
                 g_canvasMap
@@ -457,6 +475,7 @@ function drawHud(canvasID, x){
             pathcanvas.fillStyle = 'green';
             pathcanvas.fill();
             pathcanvas.lineWidth = 5;
+            pathcanvas.setLineDash([0]);
             pathcanvas.strokeStyle = '#003300';
             pathcanvas.stroke();
         }
