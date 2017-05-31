@@ -11,7 +11,6 @@ var g_points, //Contains parsed points and calculated gradients
     g_endGradient = 0,
     g_step,
     g_planeX,
-    g_planeY,
     g_canvasMap;
 /**
  * Resizes both canvasses
@@ -42,13 +41,23 @@ function resizeCanvas(){
 }
 
 /**
+ * Performs the actions for redrawing the canvas each tick
+ */
+function step(){
+    alert("x1: "+g_planeX);
+    g_planeX += 0.5;
+    redraw();
+    alert("x2: "+g_planeX);
+}
+
+/**
  * Redraws both canvasses
  */
 function redraw(){
     if (g_points !== undefined){
         plotPath("Canvas-Path",g_points);
     }
-    drawHud("Canvas-Hud",1);
+    drawHud("Canvas-Hud",g_planeX);
 }
 
 /**
@@ -336,6 +345,7 @@ function plotPath(canvasID, points) {
     canvas_2d.stroke();
     
     g_canvasMap = canvasMap;
+    g_planeX = canvasMap.minX;
 }
 
 /**
@@ -440,21 +450,14 @@ function drawHud(canvasID, x){
 
 function test(){
     'use strict';
-    //Path
     var points,
         testcanvas;
     
+    //Path
     points = parseInputPoints(document.getElementById("Input-Sequence").value,0,0);
     plotPath("Canvas-Path", points);
-    
-    /* Draws a rectangle for testing
-    testcanvas = document.getElementById("Canvas-Path").getContext("2d");
-    testcanvas.beginPath();
-    testcanvas.rect(10,10,20,20);
-    testcanvas.fillStyle = "red";
-    testcanvas.fill();
-    */
-    
     // Gui
-    drawHud("Canvas-Hud",0);
+    drawHud("Canvas-Hud",g_planeX);
+    //Timer
+    var timer = window.setInterval(step,2000);
 }
