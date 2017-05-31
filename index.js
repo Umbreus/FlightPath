@@ -51,6 +51,19 @@ function step(){
 }
 
 /**
+ * Test method to work around code asynchronicity - may overflow
+ */
+function step2(x){
+    //redraw(x)
+    if (g_points !== undefined){
+        plotPath("Canvas-Path",g_points);
+    }
+    drawHud("Canvas-Hud",x);
+    
+    window.setTimeout(function() {step2( (x+0.005)%g_canvasMap.maxX );},20);
+}
+
+/**
  * Redraws both canvasses
  */
 function redraw(){
@@ -405,6 +418,7 @@ function drawHud(canvasID, x){
         //Draws Lines
         for(var n = 1; n <= numlines; n += 1){
             var dx = lookahead*n;
+            if(x+dx <= g_canvasMap.maxX){
             var dy = evalSpline(g_points, x+dx)-evalSpline(g_points, x);
 
             var lineY = Math.atan((dy)/(dx))/(Math.PI/2)*radius;
@@ -418,6 +432,7 @@ function drawHud(canvasID, x){
             canvas_2d.moveTo(canvas.width/2-lineR,canvas.height/2+lineY);
             canvas_2d.lineTo(canvas.width/2+lineR,canvas.height/2+lineY);
             canvas_2d.stroke();
+            }
         }
         
         //Draws Plane --> if path
@@ -459,5 +474,7 @@ function test(){
     // Gui
     drawHud("Canvas-Hud",g_planeX);
     //Timer
-    var timer = window.setInterval(step,2000);
+    //var timer = window.setInterval(step,2000);
+    
+    step2(g_planeX);
 }
