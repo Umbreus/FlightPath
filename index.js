@@ -396,7 +396,11 @@ function drawHud(canvasID, x){
         for(var n = 1; n <= numlines; n += 1){
             var dx = lookahead*n;
             var dy = evalSpline(g_points, x+dx)-evalSpline(g_points, x);
+
             var lineY = Math.atan((dy)/(dx))/(Math.PI/2)*radius;
+            //Correction for y increasing down the canvas
+            lineY = -lineY;
+            
             var lineR = radius/2/n;
             
             canvas_2d.beginPath();
