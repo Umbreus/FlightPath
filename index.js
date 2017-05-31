@@ -11,7 +11,8 @@ var g_points, //Contains parsed points and calculated gradients
     g_endGradient = 0,
     g_step,
     g_planeX,
-    g_canvasMap;
+    g_canvasMap,
+    currentPlaneID = 0; // Determines which plane should fly. New planes are made on submit.
 /**
  * Resizes both canvasses
  */
@@ -51,16 +52,18 @@ function step(){
 }
 
 /**
- * Test method to work around code asynchronicity - may overflow
+ * Test method to work around code asynchronicity. ID is to check when to stop
  */
-function step2(x){
+function step2(x,ID){
     //redraw(x)
     if (g_points !== undefined){
         plotPath("Canvas-Path",g_points);
     }
     drawHud("Canvas-Hud",x);
     
-    window.setTimeout(function() {step2( (x+0.005)%g_canvasMap.maxX );},20);
+    if(ID == currentPlaneID){
+    window.setTimeout(function() {step2( (x+0.005)%g_canvasMap.maxX , ID);},20);
+    }
 }
 
 /**
@@ -494,6 +497,6 @@ function test(){
     drawHud("Canvas-Hud",g_planeX);
     //Timer
     //var timer = window.setInterval(step,2000);
-    
-    step2(g_planeX);
+    currentPlaneID += 1;
+    step2(g_planeX, currentPlaneID);
 }
