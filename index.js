@@ -36,11 +36,19 @@ function resizeCanvas(){
     c2.width = s2.width;
     c2.height = s2.height;
     
+    redraw();
+}
+
+/**
+ * Redraws both canvasses
+ */
+function redraw(){
     if (g_points !== undefined){
         plotPath("Canvas-Path",g_points);
     }
     drawHud("Canvas-Hud",0);
 }
+
 /**
  * To be called on load to initialise various things
  */
@@ -101,7 +109,7 @@ function parseInputPoints(input, startGradient, endGradient) {
         }
         //Fills in a missing x value
         if (pointFloatArray[i].length === 1) {
-            pointFloatArray[i].unshift(i === 0 ? 1 : pointFloatArray[i - 1][0] + 1);
+            pointFloatArray[i].unshift(i === 0 ? 0 : pointFloatArray[i - 1][0] + 1);
         }
     }
     
