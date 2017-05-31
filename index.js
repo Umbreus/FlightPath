@@ -10,6 +10,8 @@ var g_points, //Contains parsed points and calculated gradients
     g_startGradient = 0,
     g_endGradient = 0,
     g_step,
+    g_planeX,
+    g_planeY,
     g_canvasMap;
 /**
  * Resizes both canvasses
@@ -46,7 +48,7 @@ function redraw(){
     if (g_points !== undefined){
         plotPath("Canvas-Path",g_points);
     }
-    drawHud("Canvas-Hud",0);
+    drawHud("Canvas-Hud",1);
 }
 
 /**
@@ -345,9 +347,11 @@ function plotPath(canvasID, points) {
 function drawHud(canvasID, x){
     var canvas,
         canvas_2d,
+        pathcanvas,
         radius,
         numlines,
-        lookahead;
+        lookahead,
+        nextPoint;
 
     canvas =  document.getElementById(canvasID);
     canvas_2d = canvas.getContext("2d");
@@ -400,6 +404,32 @@ function drawHud(canvasID, x){
             canvas_2d.moveTo(canvas.width/2-lineR,canvas.height/2+lineY);
             canvas_2d.lineTo(canvas.width/2+lineR,canvas.height/2+lineY);
             canvas_2d.stroke();
+        }
+        
+        //Draws Plane --> if path
+        
+        if(g_canvasMap !== undefined){
+            pathcanvas =  document.getElementById("Canvas-Path").getContext("2d");
+        
+            nextPoint = map(
+                new Point(x,evalSpline(g_points, x),null),
+                g_canvasMap
+                );
+
+            pathcanvas.beginPath();
+            pathcanvas.arc(
+                nextPoint.x,
+                nextPoint.y,
+                5,
+                0,
+                2*Math.PI,
+                false
+            );
+            pathcanvas.fillStyle = 'green';
+            pathcanvas.fill();
+            pathcanvas.lineWidth = 5;
+            pathcanvas.strokeStyle = '#003300';
+            pathcanvas.stroke();
         }
     }
 }
