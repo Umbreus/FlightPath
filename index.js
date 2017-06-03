@@ -339,7 +339,7 @@ function plotPath(canvasID, points) {
     nextPoint = map(points[0],canvasMap);
     canvas_2d.beginPath();
     canvas_2d.moveTo(nextPoint.x,nextPoint.y);
-    canvas_2d.setLineDash([0]);
+    canvas_2d.setLineDash([]);
     canvas_2d.lineWidth = 2;
     canvas_2d.strokeStyle = "blue";
     
@@ -468,7 +468,7 @@ function drawHud(canvasID, x){
                 pathcanvas.lineTo(nextPoint.x,nextPoint.y);
                 
                 pathcanvas.lineWidth = 1;
-                pathcanvas.setLineDash([0]);
+                pathcanvas.setLineDash([]);
                 pathcanvas.strokeStyle = '#003300';
                 pathcanvas.stroke();
             }
@@ -495,7 +495,7 @@ function drawHud(canvasID, x){
             pathcanvas.fillStyle = 'green';
             pathcanvas.fill();
             pathcanvas.lineWidth = 5;
-            pathcanvas.setLineDash([0]);
+            pathcanvas.setLineDash([]);
             pathcanvas.strokeStyle = '#003300';
             pathcanvas.stroke();
         }
