@@ -425,9 +425,19 @@ function drawHud(canvasID, x){
             if(x+dx <= g_canvasMap.maxX){
             var dy = evalSpline(g_points, x+dx)-evalSpline(g_points, x);
 
-            var lineY = Math.atan((dy)/(dx))/(Math.PI/2)*radius;
+            var lineY;
+            switch(document.getElementById("mode").value){
+                case "displacement":
+                    lineY = dy/(g_canvasMap.maxY-g_canvasMap.minY)*radius;
+                    break;
+                default:
+                    //Line height based on angle
+                    lineY = Math.atan((dy)/(dx))/(Math.PI/2)*radius;
+            }
             //Correction for y increasing down the canvas
             lineY = -lineY;
+            //Scales result
+            lineY = lineY*document.getElementById("scale").value;
             
             var lineR = radius/2/n;
             
